@@ -59,9 +59,6 @@
             <h2 id="viewTitle">快速记录</h2>
           </div>
           <div class="top-actions">
-            <button class="icon-button" id="syncBtn" title="云端同步" aria-label="云端同步">
-              <i data-lucide="cloud"></i>
-            </button>
             <button class="icon-button" id="installBtn" title="安装到手机" aria-label="安装到手机" hidden>
               <i data-lucide="smartphone"></i>
             </button>
@@ -226,89 +223,6 @@
       </div>
     </template>
 
-    <div class="sync-modal" id="syncModal" aria-hidden="true">
-      <div class="sync-backdrop" data-close-sync></div>
-      <section class="sync-dialog" role="dialog" aria-modal="true" aria-labelledby="syncTitle">
-        <div class="panel-heading">
-          <div>
-            <p class="form-kicker">数据会保留在你的账号中</p>
-            <h3 id="syncTitle">云端同步</h3>
-          </div>
-          <button class="icon-button small" type="button" data-close-sync title="关闭" aria-label="关闭">
-            <i data-lucide="x"></i>
-          </button>
-        </div>
-
-        <div id="syncSignedOut">
-          <p class="sync-copy">登录同一个账号后，手机和电脑上的训练记录会自动合并并同步。</p>
-          <form id="authForm" class="auth-form">
-            <label>
-              <span>邮箱</span>
-              <input id="authEmail" type="email" autocomplete="email" placeholder="name@example.com" required />
-            </label>
-            <label>
-              <span>密码</span>
-              <input id="authPassword" type="password" autocomplete="current-password" minlength="8" placeholder="至少 8 位" required />
-            </label>
-            <div class="form-actions">
-              <button class="primary-button" type="submit" data-auth-action="signin">
-                <i data-lucide="log-in"></i>
-                <span>登录</span>
-              </button>
-              <button class="ghost-button" type="button" id="signUpBtn">
-                <i data-lucide="user-plus"></i>
-                <span>注册账号</span>
-              </button>
-            </div>
-            <button class="text-button" type="button" id="forgotPasswordBtn">忘记密码</button>
-          </form>
-        </div>
-
-        <div id="recoveryPanel" hidden>
-          <p class="sync-copy">设置新密码后，就可以用它在手机和电脑上登录。</p>
-          <form id="recoveryForm" class="auth-form">
-            <label>
-              <span>新密码</span>
-              <input id="newPassword" type="password" autocomplete="new-password" minlength="8" placeholder="至少 8 位" required />
-            </label>
-            <button class="primary-button" type="submit">
-              <i data-lucide="key-round"></i>
-              <span>保存新密码</span>
-            </button>
-            <button class="text-button" type="button" id="cancelPasswordChangeBtn">取消</button>
-          </form>
-        </div>
-
-        <div id="syncSignedIn" hidden>
-          <div class="sync-account">
-            <i data-lucide="cloud-check"></i>
-            <div>
-              <strong id="syncUserEmail"></strong>
-              <span id="syncStatus">已登录，正在同步</span>
-            </div>
-          </div>
-          <button class="ghost-button password-change-button" type="button" id="changePasswordBtn">
-            <i data-lucide="key-round"></i>
-            <span>修改登录密码</span>
-          </button>
-          <div class="form-actions sync-actions">
-            <button class="primary-button" type="button" id="syncNowBtn">
-              <i data-lucide="refresh-cw"></i>
-              <span>立即同步</span>
-            </button>
-            <button class="ghost-button" type="button" id="signOutBtn">
-              <i data-lucide="log-out"></i>
-              <span>退出账号</span>
-            </button>
-          </div>
-        </div>
-        <p class="sync-message" id="syncMessage" role="status"></p>
-      </section>
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="./cloud-config.js"></script>
-    <script src="./cloud.js"></script>
     <script src="./app.js" defer></script>
   </body>
 </html>
