@@ -603,6 +603,21 @@ select:focus {
   gap: 14px;
 }
 
+.text-button {
+  justify-self: start;
+  min-height: 32px;
+  padding: 0;
+  color: var(--accent-dark);
+  background: transparent;
+  border: 0;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.text-button:hover {
+  color: var(--accent);
+}
+
 .sync-account {
   display: flex;
   align-items: center;
@@ -633,6 +648,11 @@ select:focus {
 }
 
 .sync-actions {
+  margin-top: 14px;
+}
+
+.password-change-button {
+  width: 100%;
   margin-top: 14px;
 }
 
