@@ -78,6 +78,7 @@ function bindElements() {
     "statFavorite",
     "categoryStats",
     "installBtn",
+    "syncBtn",
     "exportBtn",
     "importInput",
   ].forEach((id) => {
@@ -121,6 +122,7 @@ function bindEvents() {
 
   els.historySearch.addEventListener("input", renderHistory);
   els.installBtn.addEventListener("click", installApp);
+  els.syncBtn.addEventListener("click", () => window.fitlogCloud?.open());
   els.exportBtn.addEventListener("click", exportData);
   els.importInput.addEventListener("change", importData);
 
@@ -150,11 +152,14 @@ function loadState() {
   return {
     exercises: defaultExercises,
     records: [],
+    deletedExerciseIds: [],
+    deletedRecordIds: [],
   };
 }
 
 function saveState() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  window.fitlogCloud?.scheduleSync();
 }
 
 function initializeDates() {
@@ -393,6 +398,7 @@ function addExercise() {
 
 function deleteRecord(id) {
   state.records = state.records.filter((record) => record.id !== id);
+  state.deletedRecordIds = uniqueIds([...(state.deletedRecordIds || []), id]);
   saveState();
   renderAll();
 }
@@ -404,6 +410,7 @@ function deleteExercise(id) {
   if (used) return;
 
   state.exercises = state.exercises.filter((item) => item.id !== id);
+  state.deletedExerciseIds = uniqueIds([...(state.deletedExerciseIds || []), id]);
   saveState();
   renderAll();
 }
@@ -448,6 +455,8 @@ function importData(event) {
       if (!Array.isArray(imported.exercises) || !Array.isArray(imported.records)) return;
       state.exercises = imported.exercises;
       state.records = imported.records;
+      state.deletedExerciseIds = [];
+      state.deletedRecordIds = [];
       saveState();
       renderAll();
     } catch {
@@ -536,6 +545,10 @@ function createId() {
   return `id-${Date.now()}-${Math.random().toString(16).slice(2)}`;
 }
 
+function uniqueIds(ids) {
+  return [...new Set(ids.filter(Boolean))];
+}
+
 function escapeHtml(value) {
   return String(value)
     .replaceAll("&", "&amp;")
@@ -559,3 +572,17 @@ if ("serviceWorker" in navigator) {
       .catch(() => {});
   });
 }
+
+window.fitlogStateApi = {
+  getState: () => structuredClone(state),
+  replaceState(nextState) {
+    state.exercises = Array.isArray(nextState.exercises) ? nextState.exercises : defaultExercises;
+    state.records = Array.isArray(nextState.records) ? nextState.records : [];
+    state.deletedExerciseIds = uniqueIds(nextState.deletedExerciseIds || []);
+    state.deletedRecordIds = uniqueIds(nextState.deletedRecordIds || []);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    renderAll();
+  },
+};
+
+window.dispatchEvent(new Event("fitlogready"));
