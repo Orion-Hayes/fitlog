@@ -27,8 +27,12 @@
     client = window.supabase.createClient(config.url, config.anonKey, {
       auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true },
     });
-    client.auth.onAuthStateChange((_event, session) => {
+    client.auth.onAuthStateChange((event, session) => {
       currentUser = session?.user || null;
+      if (event === "PASSWORD_RECOVERY") {
+        showRecovery();
+        return;
+      }
       renderAccount();
       if (currentUser) syncNow();
     });
@@ -54,6 +58,10 @@
       email: document.getElementById("authEmail"),
       password: document.getElementById("authPassword"),
       signUp: document.getElementById("signUpBtn"),
+      forgotPassword: document.getElementById("forgotPasswordBtn"),
+      recovery: document.getElementById("recoveryPanel"),
+      recoveryForm: document.getElementById("recoveryForm"),
+      newPassword: document.getElementById("newPassword"),
       signOut: document.getElementById("signOutBtn"),
       syncNow: document.getElementById("syncNowBtn"),
       userEmail: document.getElementById("syncUserEmail"),
@@ -66,6 +74,8 @@
     });
     ui.form.addEventListener("submit", signIn);
     ui.signUp.addEventListener("click", signUp);
+    ui.forgotPassword.addEventListener("click", sendPasswordReset);
+    ui.recoveryForm.addEventListener("submit", updatePassword);
     ui.signOut.addEventListener("click", signOut);
     ui.syncNow.addEventListener("click", syncNow);
   }
@@ -88,6 +98,7 @@
     const signedIn = Boolean(currentUser);
     ui.signedOut.hidden = signedIn || !isConfigured;
     ui.signedIn.hidden = !signedIn;
+    ui.recovery.hidden = true;
     if (!isConfigured) {
       setMessage("云端同步正在配置中。完成数据库连接后，这里就可以登录和同步。", "info");
       return;
@@ -127,6 +138,38 @@
       return;
     }
     setMessage("账号已创建，正在同步训练记录。", "success");
+  }
+
+  async function sendPasswordReset() {
+    if (!client || !ui.email.reportValidity()) return;
+    setMessage("正在发送重设邮件...");
+    const { error } = await client.auth.resetPasswordForEmail(ui.email.value.trim(), {
+      redirectTo: `${window.location.origin}${window.location.pathname}`,
+    });
+    setMessage(error ? readableError(error) : "重设邮件已发送，请打开邮箱中的链接设置新密码。", error ? "error" : "success");
+  }
+
+  function showRecovery() {
+    open();
+    ui.signedOut.hidden = true;
+    ui.signedIn.hidden = true;
+    ui.recovery.hidden = false;
+    setMessage("请设置一个至少 8 位的新密码。", "info");
+    ui.newPassword.focus();
+  }
+
+  async function updatePassword(event) {
+    event.preventDefault();
+    if (!client || !ui.recoveryForm.reportValidity()) return;
+    const { error } = await client.auth.updateUser({ password: ui.newPassword.value });
+    if (error) {
+      setMessage(readableError(error), "error");
+      return;
+    }
+    ui.newPassword.value = "";
+    ui.recovery.hidden = true;
+    renderAccount();
+    setMessage("新密码已保存。现在可以在手机和电脑上登录。", "success");
   }
 
   async function signOut() {
