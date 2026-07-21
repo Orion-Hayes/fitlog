@@ -1,4 +1,5 @@
 const STORAGE_KEY = "fitlog-local-v2";
+const EXERCISE_CATALOG_VERSION = 2;
 
 const categories = [
   "胸部",
@@ -9,6 +10,17 @@ const categories = [
   "核心",
   "有氧",
   "拉伸",
+];
+
+const catalogAdditions = [
+  ["蝴蝶机夹胸", "胸部"],
+  ["哑铃飞鸟", "胸部"],
+  ["俯身杠杆直臂下压", "背部"],
+  ["器械辅助引体向上", "背部"],
+  ["反向蝴蝶机飞鸟", "肩部"],
+  ["哑铃锤式弯举", "手臂"],
+  ["绳索直杆正握弯举", "手臂"],
+  ["哑铃颈后臂屈伸", "手臂"],
 ];
 
 const defaultExercises = [
@@ -31,6 +43,7 @@ const defaultExercises = [
   ["跑步", "有氧"],
   ["椭圆机", "有氧"],
   ["髋屈肌拉伸", "拉伸"],
+  ...catalogAdditions,
 ].map(([name, category], index) => ({ id: `default-${index}`, name, category }));
 
 const state = loadState();
@@ -141,6 +154,7 @@ function loadState() {
   try {
     const stored = JSON.parse(localStorage.getItem(STORAGE_KEY));
     if (stored && Array.isArray(stored.exercises) && Array.isArray(stored.records)) {
+      migrateExerciseCatalog(stored);
       return stored;
     }
   } catch {
@@ -150,7 +164,20 @@ function loadState() {
   return {
     exercises: defaultExercises,
     records: [],
+    exerciseCatalogVersion: EXERCISE_CATALOG_VERSION,
   };
+}
+
+function migrateExerciseCatalog(stored) {
+  if ((stored.exerciseCatalogVersion || 1) >= EXERCISE_CATALOG_VERSION) return;
+
+  const existing = new Set(stored.exercises.map((exercise) => `${exercise.name}::${exercise.category}`));
+  const additions = catalogAdditions
+    .map(([name, category]) => ({ id: createId(), name, category }))
+    .filter((exercise) => !existing.has(`${exercise.name}::${exercise.category}`));
+  stored.exercises.push(...additions);
+  stored.exerciseCatalogVersion = EXERCISE_CATALOG_VERSION;
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(stored));
 }
 
 function saveState() {
