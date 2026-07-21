@@ -63,6 +63,8 @@
       recoveryForm: document.getElementById("recoveryForm"),
       newPassword: document.getElementById("newPassword"),
       signOut: document.getElementById("signOutBtn"),
+      changePassword: document.getElementById("changePasswordBtn"),
+      cancelPasswordChange: document.getElementById("cancelPasswordChangeBtn"),
       syncNow: document.getElementById("syncNowBtn"),
       userEmail: document.getElementById("syncUserEmail"),
       status: document.getElementById("syncStatus"),
@@ -77,6 +79,11 @@
     ui.forgotPassword.addEventListener("click", sendPasswordReset);
     ui.recoveryForm.addEventListener("submit", updatePassword);
     ui.signOut.addEventListener("click", signOut);
+    ui.changePassword.addEventListener("click", showRecovery);
+    ui.cancelPasswordChange.addEventListener("click", () => {
+      ui.recovery.hidden = true;
+      renderAccount();
+    });
     ui.syncNow.addEventListener("click", syncNow);
   }
 
