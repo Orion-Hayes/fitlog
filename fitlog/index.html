@@ -260,6 +260,21 @@
                 <span>注册账号</span>
               </button>
             </div>
+            <button class="text-button" type="button" id="forgotPasswordBtn">忘记密码</button>
+          </form>
+        </div>
+
+        <div id="recoveryPanel" hidden>
+          <p class="sync-copy">设置新密码后，就可以用它在手机和电脑上登录。</p>
+          <form id="recoveryForm" class="auth-form">
+            <label>
+              <span>新密码</span>
+              <input id="newPassword" type="password" autocomplete="new-password" minlength="8" placeholder="至少 8 位" required />
+            </label>
+            <button class="primary-button" type="submit">
+              <i data-lucide="key-round"></i>
+              <span>保存新密码</span>
+            </button>
           </form>
         </div>
 
