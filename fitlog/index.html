@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0f766e" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="FitLog" />
+    <title>FitLog 训练记录</title>
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
+    <link rel="icon" href="./icons/favicon-64.png" sizes="64x64" />
+    <link rel="stylesheet" href="./styles.css" />
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js" defer></script>
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="brand-mark" aria-hidden="true">
+            <i data-lucide="dumbbell"></i>
+          </div>
+          <div>
+            <h1>FitLog</h1>
+            <p>训练记录</p>
+          </div>
+        </div>
+
+        <nav class="nav-tabs" aria-label="主要视图">
+          <button class="nav-tab active" data-view="today" aria-label="记录">
+            <i data-lucide="plus-circle"></i>
+            <span>记录</span>
+          </button>
+          <button class="nav-tab" data-view="library" aria-label="动作库">
+            <i data-lucide="list-plus"></i>
+            <span>动作库</span>
+          </button>
+          <button class="nav-tab" data-view="history" aria-label="历史">
+            <i data-lucide="calendar-days"></i>
+            <span>历史</span>
+          </button>
+          <button class="nav-tab" data-view="stats" aria-label="统计">
+            <i data-lucide="bar-chart-3"></i>
+            <span>统计</span>
+          </button>
+        </nav>
+
+        <div class="side-summary">
+          <span>今日组数</span>
+          <strong id="todaySets">0</strong>
+        </div>
+      </aside>
+
+      <main class="main">
+        <section class="topbar">
+          <div>
+            <p class="eyebrow" id="todayLabel">今天</p>
+            <h2 id="viewTitle">快速记录</h2>
+          </div>
+          <div class="top-actions">
+            <button class="icon-button" id="installBtn" title="安装到手机" aria-label="安装到手机" hidden>
+              <i data-lucide="smartphone"></i>
+            </button>
+            <button class="icon-button" id="exportBtn" title="导出数据" aria-label="导出数据">
+              <i data-lucide="download"></i>
+            </button>
+            <label class="icon-button file-label" title="导入数据" aria-label="导入数据">
+              <i data-lucide="upload"></i>
+              <input id="importInput" type="file" accept="application/json" />
+            </label>
+          </div>
+        </section>
+
+        <section class="view active" id="todayView">
+          <div class="record-layout">
+            <form class="panel record-panel" id="recordForm">
+              <div class="record-form-heading">
+                <div>
+                  <p class="form-kicker">添加一项</p>
+                  <h3>记录训练</h3>
+                </div>
+                <label class="date-field">
+                  <span>日期</span>
+                  <input id="recordDate" type="date" />
+                </label>
+              </div>
+
+              <div class="field-row record-selection">
+                <label>
+                  <span>分类</span>
+                  <select id="categorySelect"></select>
+                </label>
+                <label>
+                  <span>动作</span>
+                  <select id="exerciseSelect"></select>
+                </label>
+              </div>
+
+              <div class="metric-grid">
+                <label>
+                  <span>组数</span>
+                  <input id="setsInput" type="number" min="1" step="1" value="3" />
+                </label>
+                <label>
+                  <span>次数</span>
+                  <input id="repsInput" type="number" min="1" step="1" value="12" />
+                </label>
+                <label>
+                  <span>重量 kg</span>
+                  <input id="weightInput" type="number" min="0" step="0.5" value="0" />
+                </label>
+                <label>
+                  <span>时长 min</span>
+                  <input id="durationInput" type="number" min="0" step="1" value="0" />
+                </label>
+              </div>
+
+              <label>
+                <span>备注</span>
+                <input id="noteInput" type="text" placeholder="状态、器械、疼痛感..." />
+              </label>
+
+              <div class="form-actions">
+                <button class="primary-button" type="submit">
+                  <i data-lucide="check"></i>
+                  <span>保存记录</span>
+                </button>
+                <button class="ghost-button" type="button" id="quickAddBtn">
+                  <i data-lucide="repeat"></i>
+                  <span>再来一组</span>
+                </button>
+              </div>
+            </form>
+
+            <div class="panel today-panel">
+              <div class="panel-heading">
+                <h3>当天训练</h3>
+                <button class="icon-button small" id="clearTodayBtn" title="清空当天" aria-label="清空当天">
+                  <i data-lucide="trash-2"></i>
+                </button>
+              </div>
+              <div class="record-list" id="todayRecords"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="view" id="libraryView">
+          <div class="library-layout">
+            <div class="panel library-panel">
+              <div class="panel-heading">
+                <div>
+                  <p class="form-kicker">自定义你的常用动作</p>
+                  <h3>动作库</h3>
+                </div>
+              </div>
+              <form class="library-add-form" id="exerciseForm">
+                <label>
+                  <span>动作名称</span>
+                  <input id="newExerciseName" type="text" placeholder="例如：坐姿划船" />
+                </label>
+                <label>
+                  <span>分类</span>
+                  <select id="newExerciseCategory"></select>
+                </label>
+                <button class="primary-button" type="submit">
+                  <i data-lucide="plus"></i>
+                  <span>添加动作</span>
+                </button>
+              </form>
+              <div class="library-filter-heading">
+                <span>按分类查看</span>
+              </div>
+              <div class="category-pills" id="libraryFilters"></div>
+              <div class="exercise-list" id="exerciseList"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="view" id="historyView">
+          <div class="panel">
+            <div class="panel-heading history-heading">
+              <h3>训练历史</h3>
+              <input id="historySearch" type="search" placeholder="搜索动作或备注" />
+            </div>
+            <div class="timeline" id="historyList"></div>
+          </div>
+        </section>
+
+        <section class="view" id="statsView">
+          <div class="stats-grid">
+            <div class="stat-tile">
+              <span>总训练天数</span>
+              <strong id="statDays">0</strong>
+            </div>
+            <div class="stat-tile">
+              <span>总组数</span>
+              <strong id="statSets">0</strong>
+            </div>
+            <div class="stat-tile">
+              <span>总训练量 kg</span>
+              <strong id="statVolume">0</strong>
+            </div>
+            <div class="stat-tile">
+              <span>最常练动作</span>
+              <strong id="statFavorite">-</strong>
+            </div>
+          </div>
+          <div class="panel">
+            <div class="panel-heading">
+              <h3>分类分布</h3>
+            </div>
+            <div class="bar-list" id="categoryStats"></div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <template id="emptyTemplate">
+      <div class="empty-state">
+        <i data-lucide="clipboard-list"></i>
+        <p>还没有记录</p>
+      </div>
+    </template>
+
+    <script src="./app.js" defer></script>
+  </body>
+</html>
