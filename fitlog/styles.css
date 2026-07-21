@@ -562,6 +562,96 @@ select:focus {
   font-weight: 800;
 }
 
+.sync-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  display: none;
+  place-items: center;
+  padding: 18px;
+}
+
+.sync-modal.open {
+  display: grid;
+}
+
+.sync-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(20, 33, 27, 0.42);
+}
+
+.sync-dialog {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 420px);
+  padding: 20px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  box-shadow: 0 24px 60px rgba(20, 33, 27, 0.24);
+}
+
+.sync-copy {
+  margin: 0 0 16px;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.auth-form {
+  gap: 14px;
+}
+
+.sync-account {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px;
+  color: var(--accent-dark);
+  background: #eaf6f2;
+  border: 1px solid #bfe1da;
+  border-radius: 8px;
+}
+
+.sync-account > svg {
+  width: 26px;
+  height: 26px;
+  flex: 0 0 auto;
+}
+
+.sync-account strong,
+.sync-account span {
+  display: block;
+  overflow-wrap: anywhere;
+}
+
+.sync-account span {
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.sync-actions {
+  margin-top: 14px;
+}
+
+.sync-message {
+  min-height: 20px;
+  margin: 14px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.sync-message[data-type="error"] {
+  color: var(--danger);
+}
+
+.sync-message[data-type="success"] {
+  color: var(--accent-dark);
+}
+
 @media (max-width: 980px) {
   .app-shell {
     grid-template-columns: 1fr;
@@ -718,5 +808,14 @@ select:focus {
 
   .record-selection {
     grid-template-columns: 0.82fr 1.18fr;
+  }
+
+  .sync-modal {
+    align-items: end;
+    padding: 10px;
+  }
+
+  .sync-dialog {
+    width: 100%;
   }
 }
